@@ -1,0 +1,182 @@
+{% extends "molbank/base.html" %}
+{% block script %}
+<script type="text/javascript">
+function advanced_dropdown(){
+    //console.log('hello world');
+    alert(document.getElementById("id_search_type").value);
+    // alert("HELLO");
+    var x = document.getElementById("id_search_type").value;
+    if ( x == '2')
+    {
+    document.getElementById("SubStructureSearch").style.display="block"
+    }
+    else
+    {
+        document.getElementById("SubStructureSearch").style.display="none"
+    }
+    if ( x == '3')
+    {
+        document.getElementById("ExactSearch").style.display="block"
+    }
+    else
+    {
+        document.getElementById("ExactSearch").style.display="none"
+    }
+    if ( x == '4')
+    {
+        document.getElementById("SimilaritySearch").style.display="block"
+    }
+    else
+    {
+        document.getElementById("SimilaritySearch").style.display="none"
+    }
+    if ( x == '5')
+    {
+        document.getElementById("TautomerSearch").style.display="block"
+    }
+    else
+    {
+        document.getElementById("TautomerSearch").style.display="none"
+    }
+}
+function getFromKetcher(){
+    var ketcherFrame = document.getElementById('encoder_iframe');
+    console.log('ketcher frame entered xD',ketcherFrame);
+    var ketcher = null;
+
+    if ('contentDocument' in ketcherFrame)
+    ketcher = ketcherFrame.contentWindow.ketcher;
+    else // IE7
+    ketcher = document.frames['ifKetcher'].window.ketcher;
+    mol=ketcher.getSmiles();
+    document.getElementById('text_smiles').value=mol;
+    // alert(mol);
+}
+</script>
+{% endblock %}
+{%block title%}
+SEARCH
+{%endblock%}
+{% block heading%}
+<p> Search </p>
+
+<h5> Use the editor to draw / paste smiles in search bar </h5>
+{% endblock %}
+{%block searchButtons%}
+<div style="position: fixed; width: 100%;background-color: white">
+<center>
+    <ul class="nav nav-tabs">
+    <li class="active"><a  data-toggle="tab" href="#simpleSearch">Simple Search</a></li>
+    <li><a  data-toggle="tab" href="#advancedSearch">Advanced Search</a></li>
+    </ul>
+</center>
+</div>
+{%endblock%}
+{% block search_snippet%}
+
+    <div class ="container">
+{% load static %}
+<center>
+    <div class="tab-content">
+<div id="simpleSearch" class="tab-pane fade in active" role="tabpanel">
+<form name="myform" method="POST" action="/molbank/simpleSearch" enctype="multipart/form-data">
+{% csrf_token %}
+            <div class="dropdown" style="width: 30%">
+            <h3>Search Type</h3>
+            {{form2.simple_search_type}}
+            </div>
+            <h3>Data</h3>
+            <div style="width: 30%">
+            {{form2.data}}
+            </div>
+            <br><br>
+            <input class="btn btn-primary" type="submit" value="Submit" />
+            </form>
+</div>
+<div id="advancedSearch" class="tab-pane fade" role="tabpanel">
+<!-- <link type="text/javascript" href="{% static 'molbank/js/mol.js' %}"> -->
+<h5 style="font-size: 30px;"> Use the editor to draw | paste smiles in search bar </h5>
+<iframe id="encoder_iframe" height=400px width=75% src="{% static 'molbank/ketcher/dist/ketcher.html' %}"></iframe>
+<form name="myform" method="POST" action="/molbank/advancedSearch" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div style="width: 30%;">
+{{form1.search_type}}
+</div>
+        <!-- MAIN FOR i=0 --><!--Substructure Search Radio Options-->
+   <div id="SubStructureSearch" style='display:none;'>   <br>
+        <ul style="list-style: none;">
+        {% for radio_in in form1.SubStructureSearch_type %}
+            <li><label for="{{ radio_in.id_for_label }}">
+                        <span class="radio">{{ radio_in.tag }}{{ radio_in.choice_label }}</span>
+                </label>
+                    <!-- text box -->
+                    {% if forloop.counter0 == 2 %} 
+                        <ul style="list-style: none;">
+                            <li>Enter the maximum allowed root-mean-square deviation of all imposed atoms in Angstrom units:</li>
+                            <li>{{ form1.rmsa }}</li>
+                        </ul>
+                    {% endif %}
+                    <!-- text box -->
+                    {% if forloop.counter0 == 3 %}
+                        <ul style="list-style: none;">
+                            <li>Enter the maximum allowed root-mean-square deviation of all imposed atoms in Angstrom units:</li>
+                            <li>{{ form1.rmsc }}</li>
+                        </ul>
+                    {% endif %}
+                {% endfor %}
+            </li>
+        </ul>
+</div>
+        <!-- MAIN FOR i=1 Exact Search Checkbox Options -->
+        <div id="ExactSearch" style='display:none;'><br>
+            <ul style="list-style: none;">
+                <li>Selecting none of the options leads to the most flexible search:</li>
+                    {% for checkbox_in in form1.ExactSearch_type %}
+                        <li><label for="{{ checkbox_in.id_for_label }}">
+                        <span class="checkbox">{{ checkbox_in.tag }}{{ checkbox_in.choice_label }}</span    >
+                        </label></li>
+                    {% endfor %}    
+            </ul>
+</div>
+        <!-- MAIN FOR i=2 Similarity Search Radio Choices-->
+        <div id="SimilaritySearch" style='display:none;'><br>
+            <ul style="list-style: none;">
+                {% for radio_in in form1.SimilaritySearch_type %}
+                    <li><label for="{{ radio_in.id_for_label }}">
+                    <span class="radio">{{ radio_in.tag }}{{ radio_in.choice_label }}</span>
+                    </label></li>
+                {% endfor %}
+                <li>Minimum Similarity (Default is 0.8):</li>
+                <li>{{ form1.min_sim }}</li>
+            </ul>
+</div>
+        <!--MAIN FOR i=3 Tautomer Search Checkbox Options-->
+        <div id="TautomerSearch" style='display:none;'><br>
+            <ul style="list-style: none;">
+                {% for radio_in in form1.TautomerSearch_Switch %}
+                <li><label for="{{ radio_in.id_for_label }}">
+                <span class="radio">{{ radio_in.tag }}{{ radio_in.choice_label }}</span>
+                </label>
+                </li>
+                {% endfor %}
+                <li>Selecting none of the options leads to the most flexible search:</li>
+                {% for checkbox_in in form1.TautomerSearch_type %}
+                <li><label for="{{ checkbox_in.id_for_label }}">
+                <span class="checkbox">{{ checkbox_in.tag }}{{ checkbox_in.choice_label }}</span>
+                </label>
+                </li>
+                {% endfor %}
+            </ul>
+</div>
+    <input type="text" name="text_smiles" id="text_smiles" style="color: #000000;" placeholder="Enter SMILES to search" />
+    <input type="button" class="btn btn-primary" name="random1" value="get from ketcher" onclick="getFromKetcher();"/>
+<!--    <input type="button" class="btn btn-danger" name="random" value="Don't Click" onclick="(function(){
+    alert('WHY DO YOU CLICK -__- ');
+})();"/> -->
+    <input type="submit" value="Search"/>
+</form>
+</div>
+</div>
+</center>
+</div>
+{% endblock %}

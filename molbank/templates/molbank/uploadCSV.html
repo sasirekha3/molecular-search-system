@@ -1,0 +1,69 @@
+{%extends "molbank/base.html"%}
+
+{% load static %}
+{%block script%}
+<script type="text/javascript">
+  function lol(){
+  alert('nothing');
+  }
+</script>
+{%endblock%}
+{% block content %}
+<center>
+ {% if uploaded_file_url %}
+<!--     <p>File uploaded at: <a href="{{ uploaded_file_url }}">{{ uploaded_file_url }}</a></p> -->
+    <p>File uploaded : <a href="{{ uploaded_file_url }}" target="_blank" >click here to view the uploaded file</a></p>
+{% elif error %}
+<p>{{error}}</p>
+
+  {%else%}
+  <form method="post" enctype="multipart/form-data" action="/molbank/uploadCSV">
+    {% csrf_token %}
+    <input type="file" name="myfile"><br>
+    <button type="submit">Upload</button>
+  </form>
+  {% endif %}<br>
+<a href="status" > Status of Pending Files </a><br><br>
+
+{%if allstat%}
+    <table border="1" style="width: 80%;" class="table table-striped">
+        <tr>
+          <th>Name</th>
+            {% if user == 1 or user == 2%}
+          <th>Chemist</th>
+            {% endif %}
+            {% if user == 1 or user == 3%}
+          <th>Biologist</th>
+            {% endif %}
+            {% if user == 1 or user == 4%}
+          <th>Spectral</th>
+            {% endif %}
+        </tr>
+        {% for f in allstat %}
+        <tr>
+            <td><a href="media/{{f.name}}" target="_blank" >{{ f.name }}</a></td>
+            {% if user == 1 or user == 2%}
+          <td>{{ f.chemist }}</td>
+            {% endif %}
+            {% if user == 1 or user == 3%}
+          <td>{{ f.biologist }}</td>
+            {% endif %}
+            {% if user == 1 or user == 4%}
+          <td>{{ f.spectral }}</td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+    </table>
+{%elif flag%}
+<p>No pending approvals</p>
+{%endif%}
+    <a href="spectral_files" > Spectral Data Files </a>
+    {%if flag_pending%}
+     <table class="table table-hover" style="width: 30%;margin-top: 2%;">
+{%for file in pending%}
+<tr><td><a href="media/spectralData/{{ file }}" target="_blank" >{{file}}</a></td></tr>
+{%endfor%}
+</table>
+{%endif%}
+</center>
+{% endblock %}

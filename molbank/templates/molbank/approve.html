@@ -1,0 +1,26 @@
+{% extends "molbank/base.html" %}
+{%block title%}
+Approve
+{%endblock%}
+{%block heading%}
+<p> Approve Molecules </p>
+{% endblock %}
+
+{% block content %}
+{%if molecule_list %}
+	<div class="container">
+	<table class="table table-hover"  >
+		<tr>
+			<th>ID</th>
+			<th>SMILES</th>
+			<th>SAMPLE_CODE</th>
+		</tr>
+		{%for molecule in molecule_list%}
+		<tr><td>{{molecule.ID}}</td><td>{{molecule.SMILES}}</td><td>{{molecule.SAMPLE_CODE}}</td></tr>
+		{%endfor%}
+	</table>
+	{%else%}
+	<p> Error retrieving data from database</p>
+</div>
+	{%endif%}
+{% endblock %}

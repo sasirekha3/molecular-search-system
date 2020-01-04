@@ -1,0 +1,536 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+
+    {% load staticfiles %}
+    
+            <link rel="stylesheet" type="text/css" href="{% static '/molbank/kekule/themes/default/kekule.css' %}">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <script src="{% static '/molbank/kekule/extra/indigoAdapter.js' %}"></script>
+        <script src="{% static '/molbank/ketcher/dist/raphael.min.js' %}"></script>
+        <!--<script src="{% static '/molbank/three.js' %}"></script>-->
+        <!--<script src="{% static '/molbank/three.min.js' %}"></script>-->
+        <script src="{% static '/molbank/kekule/kekule.min.js' %}"></script>
+        <script src="{% static '/molbank/jquery-3.3.1.min.js' %}"></script>
+
+    
+    <title>REPORT {{mol.sample_code}}</title>
+    <meta charset="utf-8">
+    <?xml version="1.0" encoding="UTF-8"?>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="{% static 'molbank/css/bootstrap.min.css'%}"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <style type="text/css">
+        body {
+          height:100%
+        }
+        #main-content {
+    margin-top: 160px;  
+}
+#main-content-report {
+    margin-top: 50px; 
+    margin-bottom: 50px; 
+}
+.page-header-custom{
+    background: #008AC3;
+    color: #ffffff;
+    height: 120px;
+}
+#navbar {
+    height: 40px;
+    background-color: #e8ecf2;
+}
+
+#container {
+    width: 100%;
+    height: 160px;
+    position: fixed;
+    top: 0;
+}
+#container-report {
+    width: 100%;
+    height: 160px;
+    top: 0;
+}
+#SubStructureSearch{
+    padding-left: 33%;
+}
+#ExactSearch{
+    padding-left: 33%;
+}
+#SimilaritySearch{
+    padding-left: 33%;
+}
+#TautomerSearch{
+    padding-left: 33%;
+}
+
+@font-face {
+    font-family: 'Praetoria';
+    src:url('../fonts/Praetoria.otf') format('truetype'),local('Praetoria')
+
+}
+    </style>
+<style type="text/css">
+div.wid{
+    max-width:100%;
+    margin: auto;
+}
+</style>
+</head>
+<body class="body" >
+    <div style="width: 100%;background-color: white;">
+    <div id="container-report">
+            <div class="page-header-custom" id="myHeader">
+                <div class="row">
+                    <div class="col-sm-2">
+                        <center>
+                        <a href='/molbank'><img src="{% static 'molbank/img/IICT-LOGO.png' %}"  style='max-height:100px;position: relative;' alt="logo"></a>    
+                        </center>
+                    </div>
+                    <div class="col-sm-8">
+                        <center>
+                            <h1 style="font-weight:'bold';font-family: 'times new roman'">IICT MOL-BANK </h1>
+                            <h4 style="font-family: 'Monotype Corsiva'">Council of Scientific and Industrial Research</h4>
+                        </center>
+                    </div>
+                    <div class="col-sm-2">
+                        <br>
+                        <center>
+                            <p>{{username}}</p>
+                            <a class="btn btn-primary" href='/molbank/logout'>logout</a>
+                        </center>
+                    </div>
+                </div>
+            </div>
+                <div id="navbar">
+                    <ul class="nav nav-pills">
+                        <li {% if pill == "home" %} class="active" {% endif %} role="presentation"><a href='/molbank'>Home</a></li>
+                        <li {% if pill == "search" %} class="active" {% endif %} role="presentation"><a href='/molbank/search'>Search</a>
+                        </li>
+                        <!-- <li {% if pill == "add_mols" %} class="active" {% endif %} role="presentation"><a href='/molbank/add_mols'>Add molecules</a></li> -->
+                        <li {% if pill == "show_mols" %} class="active" {% endif %} role="presentation"><a href="{% url 'index'%}">Show all molecules</a></li>
+                        <li {% if pill == "uploadCSV" %} class="active" {% endif %} role="presentation"><a href="{% url 'uploadCSV'%}">Uploads</a></li>
+                    </ul>   
+                </div>
+    </div>
+</div>
+    <div id="main-content-report">
+<div class="row" style="margin-left: 3%;">
+    <div class="col-lg-4">
+        <span style="color: #008AC3;font-size: 35px;">{{mol.sample_code}}</span>
+        
+                <div id="chemViewer_2D_{{report}}" style=" box-shadow: 1px 1px 1px 1px blue;width:350px;height:250px;background-color: transparent;" data-widget="Kekule.ChemWidget.Viewer" data-chem-obj="url(#id_{{molecule.ID}})" data-predefined-setting="static">
+                </div>
+                <script>
+                    var cmlData = '{% autoescape off %}{{cml}}{% endautoescape %}'
+                    var myMolecule = Kekule.IO.loadFormatData(cmlData, 'cml');
+                    var chemViewer = new Kekule.ChemWidget.Viewer(document.getElementById('chemViewer_2D_{{report}}'));
+                    chemViewer.setChemObj(myMolecule);
+                    chemViewer.setPredefinedSetting('fullFunc');
+                    chemViewer.setEnableEdit(false);
+                </script>
+    </div>
+    <div class="col-lg-8" style="margin-top: 3%;">
+        <h1 class="h4">
+            <span style="color: #008AC3;font-size: 35px;">{{mol.Name}}</span>
+        </h1>
+        <table>
+            <tr>
+                <td width="35%">
+                    <span style="color: #808080;font-size: 20px;">SMILES</span>
+                </td>
+                <td>
+                    <span style="color: #808080;font-size: 16px;">{{mol.Smiles}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span style="color: #808080;font-size: 20px;">Molecular Formula</span>
+                </td>
+                <td>
+                    <span style="color: #808080;font-size: 16px;">{{mol.Molecular_Formula}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span style="color: #808080;font-size: 20px;">Name</span>
+                </td>
+                <td>
+                    <span style="color: #808080;font-size: 16px;">{{mol.IUPAC_Name}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span style="color: #808080;font-size: 20px;">Molecular Weight</span>
+                </td>
+                <td>
+                    <span style="color: #808080;font-size: 16px;">{{mol.Molecular_Weight}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span style="color: #808080;font-size: 20px;">Position In Array</span>
+                </td>
+                <td>
+                    <span style="color: #808080;font-size: 16px;">{{mol.Position_in_Array}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span style="color: #808080;font-size: 20px;">MTP Plate No</span>
+                </td>
+                <td>
+                    <span style="color: #808080;font-size: 16px;">{{mol.MTP_Plate_No}}</span>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+<div class="row" style="margin-left: 3%;">
+    <div class="col-lg-12">
+        <div style="width: 100%;background-color: white;margin-bottom: 2%;margin-top: 2%">
+            <center>
+                <ul class="nav nav-tabs">
+                <li class="active"><a  data-toggle="tab" href="#barcodes">Barcodes</a></li>
+                <li><a data-toggle="tab" href="#physicalProperties">Physical Properties</a></li>
+                <li><a data-toggle="tab" href="#additionalDetails">Ownership</a></li>
+                <li><a data-toggle="tab" href="#other">Other</a></li>
+                <li><a data-toggle="tab" href="#spectralData">Spectral Data</a></li>
+                </ul>
+            </center>
+        </div>
+    </div>
+</div>
+   
+<!-- <div class="container"> -->
+
+    <div class="tab-content">
+        <div id="barcodes" class="tab-pane fade in active" role="tabpanel"> 
+            <div class="row" style="margin-left: 3%;">     
+                <div class="col-lg-12">                             
+                        <ul style="list-style-type: none;">
+                        
+                      <li role="presentation">
+                        <table style="margin-left: 5%;width: 100%;">
+                            <tr>
+                                <td width="50%;">
+                                     <span style="color: #808080;font-size: 20px;">Solution-PT Barcode</span>
+                                </td>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">{{mol.Solution_PT_Barcode}}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">Array-PT Barcode</span>
+                                </td>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">{{mol.Array_PT_Barcode}}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">Tray-PT Barcode</span>
+                                </td>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">{{mol.Tray_PT_Barcode}}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">Neat Sample Barcode</span>
+                                </td>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">{{mol.Neat_sample_Barcode}}</span>
+                                </td>
+                            </tr>
+                             <tr>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">Array NS Barcode</span>
+                                </td>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">{{mol.Array_NS_Barcode}}</span>
+                                </td>
+                            </tr>
+                             <tr>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">Tray NS Barcode</span>
+                                </td>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">{{mol.Tray_NS_Barcode}}</span>
+                                </td>
+                            </tr>
+                        </table>
+                        
+                     </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div id="physicalProperties" class="tab-pane fade in" role="tabpanel"> 
+            <div class="row" style="margin-left: 3%;">     
+                <div class="col-lg-12">                             
+                        <ul style="list-style-type: none;">
+                        <li role="presentation">
+                        <table style="margin-left: 5%;width: 100%;"> 
+                             <tr>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">NMR(1H/13C)</span>
+                                </td>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">{{mol.NMR}}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">MASS</span>
+                                </td>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">{{mol.Mass}}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">HPLC/LCMS</span>
+                                </td>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">{{mol.HPLC_or_LCMS}}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">Solubility</span>
+                                </td>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">{{mol.Solubility}}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td width="50%;">
+                                     <span style="color: #808080;font-size: 20px;">#Rings</span>
+                                </td>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">{{mol.No_of_Rings}}</span>
+                                </td>
+                            </tr>   
+                            <tr>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">#Nitrogens</span>
+                                </td>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">{{mol.No_of_nitrogens}}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">#Oxygens</span>
+                                </td>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">{{mol.No_of_Oxygens}}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">TPSA</span>
+                                </td>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">{{mol.TPSA}}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">#Sulphurs</span>
+                                </td>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">{{mol.No_of_Sulphur}}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">ClogP</span>
+                                </td>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">{{mol.CLogP}}</span>
+                                </td>
+                            </tr> 
+                            <tr>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">Sample Weight Submitted</span>
+                                </td>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">{{mol.Sample_Weight_submitted}}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">Purity</span>
+                                </td>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">{{mol.Purity}}</span>
+                                </td>
+                            </tr>
+                        </table>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div id="additionalDetails" class="tab-pane fade in" role="tabpanel">
+            <div class="row" style="margin-left: 3%;">     
+                <div class="col-lg-12">
+                    <ul style="list-style-type: none;">
+                      <li role="presentation">
+                        <table style="margin-left: 5%;width: 100%;">
+                            <tr>
+                                <td width="50%;">
+                                     <span style="color: #808080;font-size: 20px;"> Date of Approval</span>
+                                </td>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">{{mol.Date_of_approval}}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">Date of Submission</span>
+                                </td>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">{{mol.Date_of_Submission}}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">Project</span>
+                                </td>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">{{mol.Project}}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">Sub Project</span>
+                                </td>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">{{mol.sub_project}}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">Scientist Name</span>
+                                </td>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">{{mol.Scientist_name}}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">Institute</span>
+                                </td>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">{{mol.Institute}}</span>
+                                </td>
+                            </tr>
+                        </table>
+                     </li>
+                 </ul>
+                </div>
+            </div>
+        </div>
+        <div id="other" class="tab-pane fade in" role="tabpanel"> 
+            <div class="row" style="margin-left: 3%;">     
+                <div class="col-lg-12">                             
+                        <ul style="list-style-type: none;">
+                        <li role="presentation">
+                            <table style="margin-left: 5%;width: 100%;">
+                            <tr>
+                                <td width="50%;">
+                                     <span style="color: #808080;font-size: 20px;"> Reference(Synthetic/Biological)</span>
+                                </td>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">{{mol.Reference_syn_or_bio}}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">Known Biological Activity</span>
+                                </td>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">{{mol.Known_bio_activity}}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">Natural/Synthetic</span>
+                                </td>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">{{mol.Natural_or_Synthetic}}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">Physical State</span>
+                                </td>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">{{mol.Physical_state}}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">Sample In</span>
+                                </td>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">{{mol.Sample_in}}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">Sample Out</span>
+                                </td>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">{{mol.Sample_out}}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">Miscellaneous</span>
+                                </td>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">{{mol.Miscellaneous}}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">Optical Rotation</span>
+                                </td>
+                                <td>
+                                    <span style="color: #808080;font-size: 20px;">{{mol.Optical_Rotation}}</span>
+                                </td>
+                            </tr>
+                        </table>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div id="spectralData" class="tab-pane fade in" role="tabpanel"> 
+            <div class="row" style="margin-left: 3%;">     
+                <div class="col-lg-12"> 
+               <center> <iframe id="encoder_iframe" height=1000px width=85% src="../media/spectralData/{{mol.sample_code}}.pdf"></iframe> </center>
+                </div>
+            </div>
+        </div>
+    </div>
+<!-- </div> -->
+  
+
+
+ 
+            
+    </div>
+</body>
+
+</html>

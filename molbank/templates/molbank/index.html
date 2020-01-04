@@ -1,0 +1,83 @@
+{% extends "molbank/base.html" %}
+{% load staticfiles%}
+{%block title%}
+IICT-MOLBANK
+{%endblock%}
+{%block heading%}
+<p> ALL MOLECULES </p>
+{% endblock %}
+{% block script %}
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <script src="{% static '/molbank/kekule/extra/indigoAdapter.js' %}"></script>
+        <script src="{% static '/molbank/ketcher/dist/raphael.min.js' %}"></script>
+        <script src="{% static '/molbank/kekule/kekule.min.js' %}"></script>
+        <script src="{% static '/molbank/jquery-3.3.1.min.js' %}"></script>
+        <script>
+            jQuery(document).ready(function($) {
+                $(".clickable-row").click(function() {
+                    window.location = $(this).data("href");
+                });
+            });
+        </script>
+ {%endblock%}
+{%block style%}
+<style type="text/css">
+div.wid{
+    max-width:100%;
+    margin: auto;
+}
+</style>
+{% endblock %}
+{% block content %}
+<center>
+    {%if mols %}
+    <div class="row wid">
+    <table class="table table-hover"  style="width: 90%;">
+        <tr>
+            <th>SAMPLE_CODE</th>
+            <th>SMILES</th>
+            <th>STRUCTURE</th>
+        </tr>
+        {%for molecule in mols%}
+        <tr class='clickable-row' data-href="{% url 'report' molecule.sample_code %}">
+            <td>{{molecule.sample_code}}</td>
+            <td>{{molecule.Smiles}}</td>
+            <td>
+                <div id="chemViewer_{{molecule.sample_code}}" style="width:160px;height:110px" data-widget="Kekule.ChemWidget.Viewer" data-chem-obj="url(#id_{{molecule.sample_code}})" data-predefined-setting="static"></div> 
+
+                <script>
+                    var cmlData = '{% autoescape off %}{{cml_dict|get_item:molecule.sample_code}}{% endautoescape %}'
+                    var myMolecule = Kekule.IO.loadFormatData(cmlData, 'cml');
+                    var chemViewer = new Kekule.ChemWidget.Viewer(document.getElementById('chemViewer_{{molecule.sample_code}}'));
+                    chemViewer.setChemObj(myMolecule);
+                    chemViewer.setZoom(0.5);
+                </script>
+            </td>
+        </tr>
+        {%endfor%}
+    </table>
+    <div class="pagination">
+    <span class="step-links">
+        {% if mols.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ mols.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ mols.number }} of {{ mols.paginator.num_pages }}.
+        </span>
+
+        {% if mols.has_next %}
+            <a href="?page={{ mols.next_page_number }}">next</a>
+            <a href="?page={{ mols.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+    {%else%}
+    <p> No Data found... </p>
+    <p><a href="index"> Try again </a></p>
+</div>
+    {%endif%}
+
+</center>
+{% endblock %}

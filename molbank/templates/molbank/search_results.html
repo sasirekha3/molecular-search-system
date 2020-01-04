@@ -1,0 +1,165 @@
+{% extends "molbank/base.html" %}
+{% load staticfiles%}
+{%block title%}
+SEARCH RESULTS
+{%endblock%}
+{% block heading%}
+<p> Search Results Page </p>
+{% endblock %}
+{% block script %}
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <script src="{% static '/molbank/kekule/extra/indigoAdapter.js' %}"></script>
+        <script src="{% static '/molbank/ketcher/dist/raphael.min.js' %}"></script>
+        <script src="{% static '/molbank/kekule/kekule.min.js' %}"></script>
+        <script src="{% static '/molbank/jquery-3.3.1.min.js' %}"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+        <script>
+            jQuery(document).ready(function($) {
+                $(".clickable-row").click(function() {
+                    window.location = $(this).data("href");
+                });
+            });
+        </script>
+ {%endblock%}
+{%block style%}
+<style type="text/css">
+div.wid{
+    max-width:100%;
+    margin: auto;
+}
+td,th{
+    text-align:center;
+}
+</style>
+{%endblock%}
+
+{% block content %}
+<center>
+    {%if mols %}
+    <div class="row wid">
+    <table class="table table-hover"  style="width: 90%;">
+    <tr>
+    <th>Project</th> 
+    <th>Position_in_Array</th>
+    <th>sub_project </th>
+    <th>MTP_Plate_No</th> 
+    <th>Structure</th>
+    <th>Solution_PT_Barcode</th> 
+    <th>Array_PT_Barcode</th>
+    <th>Tray_PT_Barcode</th>
+    <th>Neat_sample_Barcode</th> 
+    <th>Array_NS_Barcode</th>
+    <th>Tray_NS_Barcode</th>
+    <th>Smiles</th>
+    <th>Sample_code</th>
+    <th>Molecular_Weight</th>
+    <th>Molecular_Formula</th>
+    <th>CLogP</th>
+    <th>Name</th>
+    <th>NMR</th>
+    <th>Mass</th>
+    <th>HPLC_or_LCMS</th>
+    <th>Solubility</th>
+    <th>No_of_Rings</th>
+    <th>No_of_nitrogens</th>
+    <th>No_of_Oxygens</th>
+    <th>TPSA</th>
+    <th>No_of_Sulphur</th>
+    <th>Sample_Weight_submitted</th>
+    <th>Purity</th>
+    <th>IUPAC_Name</th>
+    <th>Date_of_approval</th>
+    <th>Date_of_Submission</th>
+    <th>Scientist_name</th>
+    <th>Reference_syn_or_bio</th>
+    <th>Known_bio_activity</th>
+    <th>Natural_or_Synthetic</th>
+    <th>Physical_state</th>
+    <th>Sample_in</th>
+    <th>Sample_out</th>
+    <th>Miscellaneous</th>
+    <th>Optical_Rotation</th>
+    <th>Institute</th>
+    </tr>
+    {%for molecule in mols%}
+        <tr class='clickable-row' data-href="{% url 'report' molecule.sample_code %}">
+            <td>{{molecule.Project}}</td>
+            <td>{{molecule.Position_in_Array}}</td>
+            <td>{{molecule.sub_project}}</td>
+            <td>{{molecule.MTP_Plate_No}}</td>
+                <td>
+                    <div id="chemViewer_{{molecule.sample_code}}" style="width:160px;height:110px" data-widget="Kekule.ChemWidget.Viewer" data-chem-obj="url(#id_{{molecule.sample_code}})" data-predefined-setting="static"></div> 
+                    <script>
+                    var cmlData = '{% autoescape off %}{{cml_dict|get_item:molecule.sample_code}}{% endautoescape %}'
+                    var myMolecule = Kekule.IO.loadFormatData(cmlData, 'cml');
+                    var chemViewer = new Kekule.ChemWidget.Viewer(document.getElementById('chemViewer_{{molecule.sample_code}}'));
+                    chemViewer.setChemObj(myMolecule);
+                    chemViewer.setZoom(0.5);
+                </script>
+            </td>
+            <td>{{molecule.Solution_PT_Barcode}}</td>
+            <td>{{molecule.Array_PT_Barcode}}</td>
+            <td>{{molecule.Tray_PT_Barcode}}</td>
+            <td>{{molecule.Neat_sample_Barcode}}</td>
+            <td>{{molecule.Array_NS_Barcode}}</td>
+            <td>{{molecule.Tray_NS_Barcode}}</td>
+            <td>{{molecule.Smiles}}</td>
+            <td>{{molecule.sample_code}}</td>
+            <td>{{molecule.Molecular_Weight}}</td>
+            <td>{{molecule.Molecular_Formula}}</td>
+            <td>{{molecule.CLogP}}</td>
+            <td>{{molecule.Name}}</td>
+            <td>{{molecule.NMR}}</td>
+            <td>{{molecule.Mass}}</td>
+            <td>{{molecule.HPLC_or_LCMS}}</td>
+            <td>{{molecule.Solubility}}</td>
+            <td>{{molecule.No_of_Rings}}</td>
+            <td>{{molecule.No_of_nitrogens}}</td>
+            <td>{{molecule.No_of_Oxygens}}</td>
+            <td>{{molecule.TSPA}}</td>
+            <td>{{molecule.No_of_Sulphur}}</td>
+            <td>{{molecule.Sample_Weight_submitted}}</td>
+            <td>{{molecule.Purity}}</td>
+            <td>{{molecule.IUPAC_Name}}</td>
+            <td>{{molecule.Date_of_approval}}</td>
+            <td>{{molecule.Date_of_Submission}}</td>
+            <td>{{molecule.Scientist_name}}</td>
+            <td>{{molecule.Reference_syn_or_bio}}</td>
+            <td>{{molecule.Known_bio_activity}}</td>
+            <td>{{molecule.Natural_or_Synthetic}}</td>
+            <td>{{molecule.Physical_state}}</td>
+            <td>{{molecule.Sample_in}}</td>
+            <td>{{molecule.Sample_out}}</td>
+            <td>{{molecule.Miscellaneous}}</td>
+            <td>{{molecule.Optical_Rotation}}</td>
+            <td>{{molecule.Institute}}</td>
+        </tr>
+        {%endfor%}
+    </table>
+    <div class="pagination">
+    <span class="step-links">
+        {% if mols.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ mols.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ mols.number }} of {{ mols.paginator.num_pages }}.
+        </span>
+
+        {% if mols.has_next %}
+            <a href="?page={{ mols.next_page_number }}">next</a>
+            <a href="?page={{ mols.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+    {%else%}
+    <p> No Data found... </p>
+    <p><button class="btn btn-sm" onclick="javascript:history.go(-1);">Try again</button></p>
+</div>
+    {%endif%}
+    {% if flag %}
+
+{%endif%}
+</center>
+{% endblock %}

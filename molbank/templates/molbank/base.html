@@ -1,0 +1,121 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	
+	{% block script %}{% endblock %}
+	
+	<title>{%block title%} {%endblock%}</title>
+	<meta charset="utf-8">
+	<?xml version="1.0" encoding="UTF-8"?>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	{% load staticfiles %}
+	<link rel="stylesheet" type="text/css" href="{% static 'molbank/css/bootstrap.min.css'%}"/>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<style type="text/css">
+		body {
+		  height:100%
+		}
+		#main-content {
+    margin-top: 160px;  
+}
+#main-content-report {
+    margin-top: 50px; 
+    margin-bottom: 50px; 
+}
+.page-header-custom{
+	background: #008AC3;
+	color: #ffffff;
+	height: 120px;
+}
+#navbar {
+    height: 40px;
+    background-color: #e8ecf2;
+}
+
+#container {
+    width: 100%;
+    height: 160px;
+    position: fixed;
+    top: 0;
+}
+#container-report {
+    width: 100%;
+    height: 160px;
+    top: 0;
+}
+#SubStructureSearch{
+    padding-left: 33%;
+}
+#ExactSearch{
+    padding-left: 33%;
+}
+#SimilaritySearch{
+    padding-left: 33%;
+}
+#TautomerSearch{
+    padding-left: 33%;
+}
+
+@font-face {
+	font-family: 'Praetoria';
+	src:url('../fonts/Praetoria.otf') format('truetype'),local('Praetoria')
+
+}
+	</style>
+	{%block style%}
+	{%endblock%}
+</head>
+<body class="body" >
+	<div style="position: fixed;width: 100%;background-color: white;">
+	<div id="container">
+			<div class="page-header-custom" id="myHeader">
+				<div class="row">
+					<div class="col-sm-2">
+						<center>
+						<a href='/molbank'><img src="{% static 'molbank/img/IICT-LOGO.png' %}"  style='max-height:100px;position: relative;' alt="logo"></a>	
+						</center>
+					</div>
+					<div class="col-sm-8">
+						<center>
+							<h1 style="font-weight:'bold';font-family: 'times new roman'">IICT MOL-BANK </h1>
+							<h4 style="font-family: 'Monotype Corsiva'">Council of Scientific and Industrial Research</h4>
+						</center>
+					</div>
+					<div class="col-sm-2">
+						<br>
+						<center>
+							<p>{{username}}</p>
+							<a class="btn btn-primary" href='/molbank/logout'>logout</a>
+						</center>
+					</div>
+				</div>
+			</div>
+				<div id="navbar">
+					<ul class="nav nav-pills">
+						<li {% if pill == "home" %} class="active" {% endif %} role="presentation"><a href='/molbank'>Home</a></li>
+						<li {% if pill == "search" %} class="active" {% endif %} role="presentation"><a href='/molbank/search'>Search</a>
+						</li>
+						<!-- <li {% if pill == "add_mols" %} class="active" {% endif %} role="presentation"><a href='/molbank/add_mols'>Add molecules</a></li> -->
+						<li {% if pill == "show_mols" %} class="active" {% endif %} role="presentation"><a href="{% url 'index'%}">Show all molecules</a></li>
+						<li {% if pill == "uploadCSV" %} class="active" {% endif %} role="presentation"><a href="{% url 'uploadCSV'%}">Uploads</a></li>
+					</ul>	
+				</div>
+	</div>
+</div>
+	<div id="main-content">
+
+		  {%block searchButtons%}{%endblock%}
+		  <br><br><br>
+		  {%block search_snippet%}{%endblock%}
+			   {% block content %}
+			   {% endblock %}	
+			
+	</div>
+
+<!-- 	<div id="footer">
+			<p><a href="https://www.facebook.com/IICTHyderabad-190906724311615/" target="blank">Facebook</a> | <a href="https://www.linkedin.com/company/iict" target="blank">LinkedIn</a> | <a href="https://twitter.com/csiriict" target="blank">Twitter</a></p>
+	</div>	 -->
+</body>
+
+</html>

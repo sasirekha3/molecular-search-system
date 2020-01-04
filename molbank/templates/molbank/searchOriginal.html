@@ -1,0 +1,131 @@
+{% extends "molbank/base.html" %}
+{% block script %}
+<script type="text/javascript">
+	function lol(){
+	var ketcherFrame = document.getElementById('encoder_iframe');
+	console.log('ketcher frame entered xD',ketcherFrame);
+	var ketcher = null;
+
+	if ('contentDocument' in ketcherFrame)
+	ketcher = ketcherFrame.contentWindow.ketcher;
+	else // IE7
+	ketcher = document.frames['ifKetcher'].window.ketcher;
+	mol=ketcher.getSmiles();
+	document.getElementById('text_smiles').value=mol;
+	// alert(mol);
+}
+</script>
+{% endblock %}
+{%block title%}
+SEARCH
+{%endblock%}
+{% block heading%}
+<p> Search </p>
+
+<h5> Use the editor to draw / paste smiles in search bar </h5>
+{% endblock %}
+{% block search_snippet%}
+{% load static %}
+<!-- <link type="text/javascript" href="{% static 'molbank/js/mol.js' %}"> -->
+<center><iframe id="encoder_iframe" height=400px width=75% src="{% static 'molbank/ketcher/dist/ketcher.html' %}"></iframe>
+<form name="myform" method="POST" action="/molbank/contact" enctype="multipart/form-data">
+	{% csrf_token %}
+
+    <ul style="list-style: none;">
+	{% for radio in form.search_type %}
+    <li><label for="{{ radio.id_for_label }}">
+        <span class="radio">{{ radio.tag }}{{ radio.choice_label }}</span>
+    </label>
+        <!--Substructure Search Radio Options-->
+        {% if forloop.counter0 == 0 %}
+        <ul style="list-style: none;">
+	    {% for radio_in in form.SubStructureSearch_type %}
+        <li><label for="{{ radio_in.id_for_label }}">
+        <span class="radio">{{ radio_in.tag }}{{ radio_in.choice_label }}</span>
+        </label>
+            {% if forloop.counter0 == 2 %}
+            <ul style="list-style: none;">
+                <li>
+                    Enter the maximum allowed root-mean-square deviation of all imposed atoms in Angstrom units:
+                </li>
+                <li>
+                    {{ form.rmsa }}
+                </li>
+            </ul>
+            {% endif %}
+            {% if forloop.counter0 == 3 %}
+            <ul style="list-style: none;">
+                <li>
+                    Enter the maximum allowed root-mean-square deviation of all imposed atoms in Angstrom units:
+                </li>
+                <li>
+                    {{ form.rmsc }}
+                </li>
+            </ul>
+            {% endif %}
+        {% endfor %}
+        </li>
+        </ul>
+        {% endif %}
+
+        <!--Exact Search Checkbox Options-->
+        {% if forloop.counter0 == 1 %}
+        <ul style="list-style: none;">
+            <li>Selecting none of the options leads to the most flexible search:</li>
+	    {% for checkbox_in in form.ExactSearch_type %}
+        <li><label for="{{ checkbox_in.id_for_label }}">
+        <span class="checkbox">{{ checkbox_in.tag }}{{ checkbox_in.choice_label }}</span>
+        </label>
+        </li>
+        {% endfor %}
+        </ul>
+        {% endif %}
+
+        <!--Similarity Search Radio Choices-->
+        {% if forloop.counter0 == 2 %}
+        <ul style="list-style: none;">
+	    {% for radio_in in form.SimilaritySearch_type %}
+        <li><label for="{{ radio_in.id_for_label }}">
+        <span class="radio">{{ radio_in.tag }}{{ radio_in.choice_label }}</span>
+        </label>
+        </li>
+        {% endfor %}
+            <li>Minimum Similarity (Default is 0.8):</li>
+            <li>{{ form.min_sim }}</li>
+        </ul>
+        {% endif %}
+
+        <!--Tautomer Search Checkbox Options-->
+        {% if forloop.counter0 == 3 %}
+            <ul style="list-style: none;">
+
+                {% for radio_in in form.TautomerSearch_Switch %}
+                <li><label for="{{ radio_in.id_for_label }}">
+                <span class="radio">{{ radio_in.tag }}{{ radio_in.choice_label }}</span>
+                </label>
+                </li>
+                {% endfor %}
+                <li>Selecting none of the options leads to the most flexible search:</li>
+
+                {% for checkbox_in in form.TautomerSearch_type %}
+                <li><label for="{{ checkbox_in.id_for_label }}">
+                <span class="checkbox">{{ checkbox_in.tag }}{{ checkbox_in.choice_label }}</span>
+                </label>
+                </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+    </li>
+    {% endfor %}
+    </ul>
+
+	<input type="text" name="text_smiles" id="text_smiles" style="color: #000000;" placeholder="Enter SMILES to search" />
+	<input type="button" class="btn btn-primary" name="random1" value="get from ketcher" onclick="lol();"/>
+<!-- 	<input type="button" class="btn btn-danger" name="random" value="Don't Click" onclick="(function(){
+    alert('WHY DO YOU CLICK -__- ');
+})();"/> -->
+	<input type="submit" value="Search"/>
+</form>
+</center>
+{% endblock %}

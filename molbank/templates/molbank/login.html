@@ -1,0 +1,83 @@
+<head>
+{% load staticfiles %}
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1"> 
+    <title>IICT MOLBANK</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'molbank/css/bootstrap.min.css'%}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'molbank/css/login.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'molbank/css/normalize.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'molbank/css/demo.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'molbank/css/component.css' %}" />
+    <script type="text/javascript">
+      $(window).scroll(function(){
+    $(".arrow").css("opacity", 1 - $(window).scrollTop() / 250); 
+  });
+    </script>
+</head>
+
+
+<body >
+  <div class="container-fluid">
+  <div class="demo-1 row wrapper">
+        <div id="large-header" class="large-header" style="position: center">
+            <img src="{% static 'molbank/img/IICT-LOGO.png' %}" style='max-height:100px;    height: 100px;
+   left: 50%;
+   margin-top: -50px;
+   margin-left: -50px;
+   position: absolute;
+   top: 35%;
+   width: 100px;' alt="logo"><div class="arrow bounce"><a href="#login"><i class="glyphicon glyphicon-chevron-down" aria-hidden="true"></i></a></div>
+            <h1 class="main-title" style="position: absolute;">IICT MOLBANK</h1>
+          <canvas id="demo-canvas"></canvas>
+        </div>
+  </div>
+  <br><br>
+  <div id="login" class = "row" style="padding-top: 200px">
+    <div class="col-sm-12">
+      <div class="col-sm-4">
+      <p style="color: blue;font-family:sans-serif;font-size: 15px;font-style: italic; ">CSIR-Indian Institute of Chemical Technology (IICT), since its inception in 1944, has been instrumental in addressing numerous societal challenges and innovative solutions to problems of Indian industries in the area of drugs and pharmaceuticals, agrochemicals, lipids, catalysis, functional materials, environmental, analytical, biological and engineering sciences. Traditional boundaries of scientific disciplines are rapidly disappearing, chemists, physicists, biologists and physicians are coming together in developing platform nano-biotechnolgy for combating dreaded diseases, in exploring solar energy as alternative energy source, in designing various strategic materials for example.</p>
+      </div>
+      <div class="col-sm-4">
+        <iframe width="420" height="250" src="https://youtube.com/embed/HxqnCn8uC5o"></iframe>
+      </div>
+      <div class="col-sm-4 container">
+    <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">Please sign in</h3>
+        </div>
+          <div class="panel-body">
+            <form name="myform" method="POST" action="/molbank/login">
+            {% csrf_token %}  
+                    <fieldset>
+                <div class="form-group">
+                  <input class="form-control" placeholder="username" name="username" type="text">
+                </div>
+                <div class="form-group">
+                <input class="form-control" placeholder="Password" name="password" type="password" value="">
+                </div>
+                <div class="checkbox">
+                  <label>
+                    <input name="remember" type="checkbox" value="Remember Me"> Remember Me
+                  </label>
+                </div>
+              <input class="btn btn-lg btn-primary btn-block" type="submit" value="Login">
+            </fieldset>
+              </form>
+          </div>
+    </div>
+  </div>
+</div>
+  </div>
+</div>
+    <script src="{% static 'molbank/js/TweenLite.min.js' %}"></script>
+    <script src="{% static 'molbank/js/EasePack.min.js' %}"></script>
+    <script src="{% static 'molbank/js/rAF.js' %}"></script>
+    <script src="{% static 'molbank/js/demo-1.js' %}"></script>
+</body>
+
+
+
+
+
+
+

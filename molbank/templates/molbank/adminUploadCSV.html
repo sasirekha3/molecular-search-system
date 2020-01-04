@@ -1,0 +1,66 @@
+{%extends "molbank/base.html"%}
+
+{% load static %}
+{%block script%}
+<script type="text/javascript">
+	function lol(){
+	alert('nothing');
+	}
+</script>
+{%endblock%}
+{% block content %}
+<center>
+ {% if uploaded_file_url %}
+<!--     <p>File uploaded at: <a href="{{ uploaded_file_url }}">{{ uploaded_file_url }}</a></p> -->
+    <p>File uploaded : <a href="{{ uploaded_file_url }}" target="_blank" >click here to view the uploaded file</a></p>
+{% elif error %}
+<p>{{error}}</p>
+  {%else%}
+  <form method="post" enctype="multipart/form-data" action="/molbank/uploadCSV">
+    {% csrf_token %}
+    <input type="file" name="myfile"><br>
+    <button type="submit">Upload</button>
+  </form>
+  {% endif %}<br>
+<a href="status" > Status of Pending Files </a><br><br>
+{%if allstat  %}
+    <table border="1" style="width: 80%;" class="table table-striped">
+        <tr>
+          <th>Name</th>
+          <th>Chemist</th>
+          <th>Biologist</th>
+          <th>Spectral</th>
+          <th>Upload</th>
+        </tr>
+        {% for f in allstat %}
+        <tr>
+            <td><a  href="media/{{f.name}}" target="_blank" >{{ f.name }}</a></td>
+
+          <td>{{ f.chemist }}</td>
+          <td>{{ f.biologist }}</td>
+          <td>{{ f.spectral }}</td>
+          <td>
+              <form method="post" enctype="multipart/form-data" action="/molbank/updateDB">
+              {% csrf_token %}
+                  <input type="file" name="myfileDB" class="btn btn-default btn-sm" accept=".csv"/>
+                  <input type="hidden" name="ogfile" value="{{f.name}}"/>
+                  <button class="btn btn-default" type="submit">Update Permanently</button>
+              </form>
+          </td>
+
+        </tr>
+        {% endfor %}
+    </table>
+{%elif flag%}
+<p>No pending approvals</p>
+{%endif%}
+<a href="spectral_files" > Spectral Data Files </a>
+    {%if flag_pending%}
+    <table class="table table-hover" style="width: 30%;margin-top: 2%;">
+{%for file in pending%}
+<tr><td><a href="media/spectralData/{{ file }}" target="_blank" >{{file}}</a></td></tr>
+{%endfor%}
+</table>
+{%endif%}
+</center>
+{% endblock %}
